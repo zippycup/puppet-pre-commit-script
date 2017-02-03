@@ -20,7 +20,7 @@ note the path to pre-commit.sh
 installed the following software:
 
 puppet
-sudo yum install puppet -y
+* sudo yum install puppet -y
 
 puppet-lint
 * sudo yum install gcc g++ make automake autoconf curl-devel openssl-devel zlib-devel httpd-devel apr-devel apr-util-devel sqlite-devel -y
@@ -34,5 +34,5 @@ yamllint
 
 ## Run utility
 
-cd [to git or svn repo directory]
-sh [path_to_file]/pre-commit.sh
+* cd [to git or svn repo directory]
+* sh [path_to_file]/pre-commit.sh
