@@ -7,7 +7,6 @@ global_error_flag=0
 run_puppet_lint()
 {
     error_flag=0
-    ((i=0))
 
     for current_file in $1
     do
@@ -35,7 +34,6 @@ run_puppet_lint()
 run_yaml_lint()
 {
     error_flag=0
-    ((i=0))
 
     for current_file in $1
     do
@@ -138,6 +136,16 @@ then
     exit 1
 fi
 
+# check puppet
+which puppet > /dev/null 2>&1
+if [ "$?" -ne 0 ]
+then
+    echo "puppet is not installed, skipping puppet code validate"
+    echo "To install, type :"
+    echo "   sudo yum install puppet"
+    break
+fi
+
 if [ -d  .svn ]
 then
     echo 'use svn'
@@ -154,36 +162,25 @@ fi
 
 all_files=`${version_control} status | egrep "(${modified}|${added})" | awk '{print $2}'`
 
-file_modified=`${version_control} status | grep "${modified}" | awk -v var=${modified} '{split($0,a,var); print a[2]}' | grep '.pp$'`
-file_added=`${version_control} status | grep "${added}" | awk -v var=${add} '{split($0,a,var); print a[2]}' | grep '.pp$'`
+file_modified=`${version_control} status | grep "${modified}" | awk -v var=${modified} '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | grep '.pp$'`
+file_added=`${version_control} status | grep "${added}" | awk -v var=${add} '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | grep '.pp$'`
 puppet_list="${file_modified} ${file_added}"
 
-yaml_modified=`${version_control} status | grep "${modified}" | awk -v var=${modified} '{split($0,a,var); print a[2]}' | egrep '(.yaml$|.yml$)'`
-yaml_added=`${version_control} status | grep "${added}" | awk -v var=${added} '{split($0,a,var); print a[2]}' | egrep '(.yaml$|.yml$)'`
+yaml_modified=`${version_control} status | grep "${modified}" | awk -v var=${modified} '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | egrep '(.yaml$|.yml$)'`
+yaml_added=`${version_control} status | grep "${added}" | awk -v var=${added} '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | egrep '(.yaml$|.yml$)'`
 yaml_list="${yaml_modified} ${yaml_added}"
 
 echo
 echo "========= puppet-lint style check  =========="
 run_puppet_lint "${puppet_list}"
 
-# check puppet
-which puppet > /dev/null 2>&1
-if [ "$?" -ne 0 ]
-then
-    echo "puppet is not installed, skipping puppet code validate"
-    echo "To install, type :"
-    echo "   sudo yum install puppet"
-    break
-else
-    echo
-    echo "========= puppet parser validate =========="
-    run_parser_validate "${puppet_list}"
-fi
+echo
+echo "========= puppet parser validate =========="
+run_parser_validate "${puppet_list}"
 
 echo
 echo "========= yamllint style check  =========="
 run_yaml_lint "${yaml_list}"
-echo
 
 echo
 echo "========= CRLF line terminators  =========="
