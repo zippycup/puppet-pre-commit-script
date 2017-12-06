@@ -162,12 +162,12 @@ fi
 
 all_files=`${version_control} status | egrep "(${modified}|${added})" | awk '{print $2}'`
 
-file_modified=`${version_control} status | grep "${modified}" | awk -v var=${modified} '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | grep '.pp$'`
-file_added=`${version_control} status | grep "${added}" | awk -v var=${add} '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | grep '.pp$'`
+file_modified=`${version_control} status | grep "${modified}" | awk -v var="${modified}" '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | grep '.pp$'`
+file_added=`${version_control} status | grep "${added}" | awk -v var="${add}" '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | grep '.pp$'`
 puppet_list="${file_modified} ${file_added}"
 
-yaml_modified=`${version_control} status | grep "${modified}" | awk -v var=${modified} '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | egrep '(.yaml$|.yml$)'`
-yaml_added=`${version_control} status | grep "${added}" | awk -v var=${added} '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | egrep '(.yaml$|.yml$)'`
+yaml_modified=`${version_control} status | grep "${modified}" | awk -v var="${modified}" '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | egrep '(.yaml$|.yml$)'`
+yaml_added=`${version_control} status | grep "${added}" | awk -v var="${added}" '{split($0,a,var); split(a[2],myfile," ");if (myfile[1] == "+"){print myfile[2]} else { print a[2]} }' | egrep '(.yaml$|.yml$)'`
 yaml_list="${yaml_modified} ${yaml_added}"
 
 echo
